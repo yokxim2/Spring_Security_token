@@ -1,5 +1,6 @@
 package org.example.deepsecurity_token.config;
 
+import org.example.deepsecurity_token.jwt.JWTFilter;
 import org.example.deepsecurity_token.jwt.JWTUtil;
 import org.example.deepsecurity_token.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
@@ -60,6 +61,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join").permitAll()
                         .anyRequest().authenticated());
+
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);

@@ -22,7 +22,6 @@ public class ReissueController {
         this.reissueService = reissueService;
     }
 
-    // 이 부분의 로직은 서비스 단으로 넘어가야 함(추후 변경 예정)
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 

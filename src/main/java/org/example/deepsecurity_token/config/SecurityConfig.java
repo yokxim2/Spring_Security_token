@@ -1,6 +1,7 @@
 package org.example.deepsecurity_token.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.deepsecurity_token.jwt.CustomLogoutFilter;
 import org.example.deepsecurity_token.jwt.JWTFilter;
 import org.example.deepsecurity_token.jwt.JWTUtil;
 import org.example.deepsecurity_token.jwt.LoginFilter;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -93,6 +95,9 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), refreshRepository, jwtUtil), UsernamePasswordAuthenticationFilter.class);

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.example.deepsecurity_token.jwt.JWTFilter;
 import org.example.deepsecurity_token.jwt.JWTUtil;
 import org.example.deepsecurity_token.jwt.LoginFilter;
+import org.example.deepsecurity_token.repository.RefreshRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,11 +27,12 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.refreshRepository = refreshRepository;
     }
 
     //AuthenticationManager Bean 등록
@@ -93,7 +95,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), refreshRepository, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
